@@ -1,28 +1,13 @@
+package ru.common.model;
+
 public class Task {
-    public enum TaskStatus {
-        NEW("New"),
-        IN_PROGRESS("In progress"),
-        DONE("Done");
-
-        private final String displayName;
-
-        TaskStatus(String displayName) {
-            this.displayName = displayName;
-        }
-
-        @Override
-        public String toString() {
-            return displayName;
-        }
-    }
-
 
     private String name;
     private String description;
     private TaskStatus status;
     private int id;
 
-    Task(String name, String description, TaskStatus status) {
+    public Task(String name, String description, TaskStatus status) {
         this.name = name;
         this.description = description;
         this.status = status;

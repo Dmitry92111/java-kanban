@@ -1,72 +1,77 @@
+package ru.common;
+
+import ru.common.model.TaskStatus;
+import ru.common.manager.TaskManager;
+
 public class Main {
 
     public static void main(String[] args) {
+        TaskManager taskManager = new TaskManager();
 
         String name = "Выучить уроки"; //id 1
         String description = "Не люблю учить уроки";
-        Task.TaskStatus status = Task.TaskStatus.NEW;
-        TaskManager.createNewTask(name, description, status);
+        TaskStatus status = TaskStatus.NEW;
+        taskManager.createNewTask(name, description, status);
 
 
         String name2 = "Погулять с собакой"; //id 2
         String description2 = "Не люблю гулять с собакой";
-        Task.TaskStatus status2 = Task.TaskStatus.IN_PROGRESS;
-        TaskManager.createNewEpicTask(name2, description2, status2);
+        TaskStatus status2 = TaskStatus.IN_PROGRESS;
+        taskManager.createNewEpicTask(name2, description2, status2);
 
         String name3 = "Выйти на улицу"; // id 3
         String description3 = "Ну, вышел и вышел";
-        Task.TaskStatus status3 = Task.TaskStatus.DONE;
-        Task relatedEpicTask = TaskManager.getTask(2);
-        TaskManager.createNewSubTask(name3, description3, status3, (EpicTask) relatedEpicTask);
+        TaskStatus status3 = TaskStatus.DONE;
+        int relatedEpicTaskId = 2;
+        taskManager.createNewSubTask(name3, description3, status3, relatedEpicTaskId);
 
 
         String name4 = "Гулять"; // id 4
         String description4 = "Гуляю, гуляю, гуляю";
-        Task.TaskStatus status4 = Task.TaskStatus.IN_PROGRESS;
-        Task relatedEpicTask2 = TaskManager.getTask(2);
-        TaskManager.createNewSubTask(name4, description4, status4, (EpicTask) relatedEpicTask2);
+        TaskStatus status4 = TaskStatus.IN_PROGRESS;
+        taskManager.createNewSubTask(name4, description4, status4, relatedEpicTaskId);
 
-        TaskManager.printAllTasks();
+        taskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
         int idForChange = 4;
 
         String changedName = "Гулять В ПАРКЕ";
-        TaskManager.changeTaskName(idForChange, changedName);
-        TaskManager.printAllTasks();
+        taskManager.changeTaskName(idForChange, changedName);
+        taskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
 
         String changedDescription = "Гуляю, гуляю, гуляю в ПААААРКЕ";
-        TaskManager.changeTaskDescription(idForChange, changedDescription);
-        TaskManager.printAllTasks();
+        taskManager.changeTaskDescription(idForChange, changedDescription);
+        taskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
-        Task.TaskStatus changedStatus = Task.TaskStatus.DONE;
-        TaskManager.changeTaskStatus(idForChange, changedStatus);
-        TaskManager.printAllTasks();
+        TaskStatus changedStatus = TaskStatus.DONE;
+        taskManager.changeTaskStatus(idForChange, changedStatus);
+        taskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
-        TaskManager.overwriteTask(4, "АПЫВЫ", "ЖЫФВлв", Task.TaskStatus.NEW);
-        TaskManager.printAllTasks();
+        taskManager.overwriteTask(idForChange, "АПЫВЫ", "ЖЫФВлв", TaskStatus.NEW);
+        taskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
-        TaskManager.changeTaskStatus(4, Task.TaskStatus.DONE);
-        TaskManager.printAllTasks();
+        taskManager.changeTaskStatus(idForChange, TaskStatus.DONE);
+        taskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
-        TaskManager.printSubTasks();
+        taskManager.printSubTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
-        TaskManager.removeTask(4);
-        TaskManager.printAllTasks();
+        taskManager.removeTask(idForChange);
+        taskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
-        TaskManager.showTaskInfo(3);
+        taskManager.showTaskInfo(3);
         System.out.println("-------------------------------------------------------------------------------");
 
-        TaskManager.removeAllTasks();
-        TaskManager.printAllTasks();
+        taskManager.removeAllTasks();
+        taskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
     }
 }
