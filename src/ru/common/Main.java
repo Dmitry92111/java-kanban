@@ -16,8 +16,7 @@ public class Main {
 
         String name2 = "Погулять с собакой"; //id 2
         String description2 = "Не люблю гулять с собакой";
-        TaskStatus status2 = TaskStatus.IN_PROGRESS;
-        taskManager.createNewEpicTask(name2, description2, status2);
+        taskManager.createNewEpicTask(name2, description2);
 
         String name3 = "Выйти на улицу"; // id 3
         String description3 = "Ну, вышел и вышел";
@@ -37,37 +36,59 @@ public class Main {
         int idForChange = 4;
 
         String changedName = "Гулять В ПАРКЕ";
-        taskManager.changeTaskName(idForChange, changedName);
+        taskManager.changeSubTaskName(idForChange, changedName);
         taskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
 
         String changedDescription = "Гуляю, гуляю, гуляю в ПААААРКЕ";
-        taskManager.changeTaskDescription(idForChange, changedDescription);
+        taskManager.changeSubTaskDescription(idForChange, changedDescription);
         taskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
         TaskStatus changedStatus = TaskStatus.DONE;
-        taskManager.changeTaskStatus(idForChange, changedStatus);
+        taskManager.changeSubTaskStatus(idForChange, changedStatus);
         taskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
-        taskManager.overwriteTask(idForChange, "АПЫВЫ", "ЖЫФВлв", TaskStatus.NEW);
+        taskManager.overwriteSubTask(idForChange, "АПЫВЫ", "ЖЫФВлв", TaskStatus.NEW);
         taskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
-        taskManager.changeTaskStatus(idForChange, TaskStatus.DONE);
+        taskManager.overwriteEpicTask(2, "Привет", "Как дела?");
+        taskManager.showEpicTaskInfo(2);
+        System.out.println("-------------------------------------------------------------------------------");
+
+        taskManager.overwriteTask(1, "ААААААААААА", "ЫЫЫЫЫЫЫЫЫЫЫЫЫЫ", TaskStatus.IN_PROGRESS);
+        taskManager.showTaskInfo(1);
+        System.out.println("-------------------------------------------------------------------------------");
+
+        taskManager.changeSubTaskStatus(idForChange, TaskStatus.DONE);
         taskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
         taskManager.printSubTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
-        taskManager.removeTask(idForChange);
+        taskManager.showSubTaskInfo(3);
+        System.out.println("-------------------------------------------------------------------------------");
+
+        taskManager.removeSubTask(idForChange);
         taskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
-        taskManager.showTaskInfo(3);
+        taskManager.removeEpicTask(2);
+        taskManager.printAllTasks();
+        System.out.println("-------------------------------------------------------------------------------");
+
+        taskManager.removeTask(1);
+        taskManager.printAllTasks();
+        System.out.println("-------------------------------------------------------------------------------");
+
+        taskManager.createNewTask(name, description, status);
+        taskManager.createNewTask(name, description, status);
+        taskManager.createNewTask(name, description, status);
+        taskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
         taskManager.removeAllTasks();
