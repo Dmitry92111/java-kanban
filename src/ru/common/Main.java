@@ -1,5 +1,8 @@
 package ru.common;
 
+import ru.common.model.EpicTask;
+import ru.common.model.SubTask;
+import ru.common.model.Task;
 import ru.common.model.TaskStatus;
 import ru.common.manager.TaskManager;
 
@@ -11,24 +14,29 @@ public class Main {
         String name = "Выучить уроки"; //id 1
         String description = "Не люблю учить уроки";
         TaskStatus status = TaskStatus.NEW;
-        taskManager.createNewTask(name, description, status);
+        Task task1 = new Task(name, description, status);
+        taskManager.addNewTask(task1);
 
 
         String name2 = "Погулять с собакой"; //id 2
         String description2 = "Не люблю гулять с собакой";
-        taskManager.createNewEpicTask(name2, description2);
+        EpicTask epicTask2 = new EpicTask(name2, description2);
+        taskManager.addNewEpicTask(epicTask2);
+
+        int relatedEpicTaskId = epicTask2.getId();
 
         String name3 = "Выйти на улицу"; // id 3
         String description3 = "Ну, вышел и вышел";
         TaskStatus status3 = TaskStatus.DONE;
-        int relatedEpicTaskId = 2;
-        taskManager.createNewSubTask(name3, description3, status3, relatedEpicTaskId);
+        SubTask subTask3 = new SubTask(name3, description3, status3, relatedEpicTaskId);
+        taskManager.addNewSubTask(subTask3);
 
 
         String name4 = "Гулять"; // id 4
         String description4 = "Гуляю, гуляю, гуляю";
         TaskStatus status4 = TaskStatus.IN_PROGRESS;
-        taskManager.createNewSubTask(name4, description4, status4, relatedEpicTaskId);
+        SubTask subTask4 = new SubTask(name4, description4, status4, relatedEpicTaskId);
+        taskManager.addNewSubTask(subTask4);
 
         taskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
@@ -85,13 +93,13 @@ public class Main {
         taskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
-        taskManager.createNewTask(name, description, status);
-        taskManager.createNewTask(name, description, status);
-        taskManager.createNewTask(name, description, status);
+        taskManager.addNewTask(new Task(name, description, status));
+        taskManager.addNewTask(new Task(name, description, status));
+        taskManager.addNewTask(new Task(name, description, status));
         taskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
-        taskManager.removeAllTasks();
+        taskManager.removeAll();
         taskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
     }

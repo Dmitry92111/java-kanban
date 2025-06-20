@@ -15,25 +15,22 @@ public class TaskManager {
     private final HashMap<Integer, EpicTask> epicTasks = new HashMap<>();
     private final HashMap<Integer, SubTask> subTasks = new HashMap<>();
 
-    public void createNewTask(String name, String description, TaskStatus status) {
-        Task task = new Task(name, description, status);
+    public void addNewTask(Task task) {
         task.setId(idCounter);
         tasks.put(task.getId(), task);
         idCounter++;
     }
 
-    public void createNewEpicTask(String name, String description) {
-        EpicTask epicTask = new EpicTask(name, description);
+    public void addNewEpicTask(EpicTask epicTask) {
         epicTask.setId(idCounter);
         epicTasks.put(epicTask.getId(), epicTask);
         idCounter++;
     }
 
-    public void createNewSubTask(String name, String description, TaskStatus status, int relatedEpicTaskId) {
-        SubTask subTask = new SubTask(name, description, status, relatedEpicTaskId);
+    public void addNewSubTask(SubTask subTask) {
         subTask.setId(idCounter);
         subTasks.put(subTask.getId(), subTask);
-        EpicTask relatedEpicTask = epicTasks.get(relatedEpicTaskId);
+        EpicTask relatedEpicTask = epicTasks.get(subTask.getRelatedEpicTaskId());
         relatedEpicTask.addRelatedSubTaskId(subTask.getId());
         checkSubTaskStatusAndUpdateEpic(relatedEpicTask);
         idCounter++;
@@ -166,11 +163,29 @@ public class TaskManager {
         checkSubTaskStatusAndUpdateEpic(epicTask);
     }
 
-    public void removeAllTasks() {
+    public void removeAllTasks(){
         tasks.clear();
-        epicTasks.clear();
-        subTasks.clear();
-        System.out.println("Все задачи успешно удалены!");
+    }
+
+    public void removeAllEpicTasks(){
+        for (int id : epicTasks.keySet()) {
+            removeEpicTask(id);
+        }
+    }
+
+    public void removeAllSubTasks() {
+        for (int id : subTasks.keySet()) {
+            removeSubTask(id);
+        }
+        for (EpicTask epicTask : epicTasks.values()) {
+            checkSubTaskStatusAndUpdateEpic(epicTask);
+        }
+    }
+
+    public void removeAll() {
+        removeAllTasks();
+        removeAllEpicTasks();
+        removeAllSubTasks();
     }
 
     public void showTaskInfo(int id) {
