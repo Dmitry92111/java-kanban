@@ -10,11 +10,15 @@ public class EpicTask extends Task {
         relatedSubTasksId = new ArrayList<>();
     }
 
-    public void addRelatedSubTaskId(int subTask) {
-        relatedSubTasksId.add(subTask);
+    public void addRelatedSubTaskId(int subTaskId) {
+        relatedSubTasksId.add(subTaskId);
     }
 
     public ArrayList<Integer> getRelatedSubTasksId() {
-        return relatedSubTasksId;
+        return new ArrayList<>(relatedSubTasksId);
+    }
+
+    public void removeRelatedSubTaskId (int subTaskId) {
+        relatedSubTasksId.remove((Integer) subTaskId);
     }
 }

@@ -38,7 +38,24 @@ public class Main {
         SubTask subTask4 = new SubTask(name4, description4, status4, relatedEpicTaskId);
         taskManager.addNewSubTask(subTask4);
 
-        taskManager.printAllTasks();
+        System.out.println("\nТест 1. Внесение изменений в несуществующую задачу");
+        taskManager.changeEpicTaskName(312, "БУ!");
+
+        System.out.println("\nТест 2. Добавление подзадачи по Несуществующему эпику");
+        SubTask subTask5 = new SubTask("Sub", "Desc", TaskStatus.NEW, 999);
+        taskManager.addNewSubTask(subTask5);
+
+        taskManager.addNewEpicTask(new EpicTask("Эпик1", ""));
+        taskManager.addNewEpicTask(new EpicTask("Эпик2", ""));
+
+        System.out.println("\nТест 3. (удаление эпиков)");
+        taskManager.removeAllEpicTasks();
+
+        System.out.println("\nТест 4. Удаление несуществующей задач");
+        taskManager.removeTask(321);
+
+
+        /*taskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
         int idForChange = 4;
@@ -101,6 +118,6 @@ public class Main {
 
         taskManager.removeAll();
         taskManager.printAllTasks();
-        System.out.println("-------------------------------------------------------------------------------");
+        System.out.println("-------------------------------------------------------------------------------");*/
     }
 }
