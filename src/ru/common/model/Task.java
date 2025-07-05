@@ -15,13 +15,6 @@ public class Task {
         this.status = TaskStatus.NEW;
     }
 
-    public Task (Task other) {
-        this.id = other.id;
-        this.name = other.name;
-        this.description = other.description;
-        this.status = other.status;
-    }
-
     @Override
     public String toString() {
         return name + " | Описание: " + description + " | Статус: " + status;

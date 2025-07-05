@@ -8,11 +8,6 @@ public class SubTask extends Task {
         this.relatedEpicTaskId = relatedEpicTaskId;
     }
 
-    public SubTask(SubTask other) {
-        super(other);
-        this.relatedEpicTaskId = other.relatedEpicTaskId;
-    }
-
     public Integer getRelatedEpicTaskId() {
         return relatedEpicTaskId;
     }

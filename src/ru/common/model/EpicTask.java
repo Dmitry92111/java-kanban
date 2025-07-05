@@ -10,11 +10,6 @@ public class EpicTask extends Task {
         relatedSubTasksId = new ArrayList<>();
     }
 
-    public EpicTask(EpicTask other) {
-        super(other);
-        this.relatedSubTasksId = new ArrayList<>(other.relatedSubTasksId);
-    }
-
     public void addRelatedSubTaskId(int subTaskId) {
         relatedSubTasksId.add(subTaskId);
     }

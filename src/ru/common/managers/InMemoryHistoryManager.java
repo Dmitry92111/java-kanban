@@ -1,14 +1,13 @@
 package ru.common.managers;
 
-import ru.common.model.EpicTask;
-import ru.common.model.SubTask;
 import ru.common.model.Task;
 
+import java.util.List;
 import java.util.ArrayList;
 
 public class InMemoryHistoryManager implements HistoryManager {
-
-    private final ArrayList<Task> lastSeenTasks = new ArrayList<>(10);
+    private static final int LAST_SEEN_TASKS_MAX_LENGTH = 10;
+    private final List<Task> lastSeenTasks = new ArrayList<>(10);
 
 
     @Override
@@ -17,26 +16,14 @@ public class InMemoryHistoryManager implements HistoryManager {
             return;
         }
 
-        Task taskCopy;
-
-        if (task instanceof EpicTask) {
-            taskCopy = new EpicTask((EpicTask) task);
-        } else if (task instanceof SubTask) {
-            taskCopy = new SubTask((SubTask) task);
-        } else {
-            taskCopy = new Task(task);
-        }
-
-        if (lastSeenTasks.size() < 10) {
-            lastSeenTasks.add(taskCopy);
-        } else {
+        if (lastSeenTasks.size() == LAST_SEEN_TASKS_MAX_LENGTH) {
             lastSeenTasks.removeFirst();
-            lastSeenTasks.add(taskCopy);
         }
+        lastSeenTasks.add(task);
     }
 
     @Override
-    public ArrayList<Task> getHistory() {
-        return lastSeenTasks;
+    public List<Task> getHistory() {
+        return new ArrayList<>(lastSeenTasks);
     }
 }

@@ -1,12 +1,9 @@
-package ru.common.tests;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.common.managers.InMemoryHistoryManager;
 import ru.common.model.EpicTask;
 import ru.common.model.SubTask;
 import ru.common.model.Task;
-import ru.common.model.TaskStatus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -84,15 +81,10 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void shouldHistoryTasksStayUnchangedWhenTasksChanged() {
+    void shouldSaveSameTasksInHistory() {
         manager.add(task1);
-        Task task1BeforeChange = new Task(task1);
+        manager.add(task1);
 
-        task1.setId(5);
-        task1.setName("NEW NAME");
-        task1.setDescription("NEW DESCRIPTION");
-        task1.setStatus(TaskStatus.DONE);
-
-        assertEquals(manager.getHistory(), new ArrayList<>(Collections.singletonList(task1BeforeChange)));
+        assertEquals(manager.getHistory(), new ArrayList<>(Arrays.asList(task1, task1)));
     }
 }
