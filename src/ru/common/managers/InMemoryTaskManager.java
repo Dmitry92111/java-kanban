@@ -1,4 +1,4 @@
-package ru.common.manager;
+package ru.common.managers;
 
 import ru.common.model.Task;
 import ru.common.model.EpicTask;
@@ -8,30 +8,37 @@ import ru.common.model.TaskStatus;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class TaskManager {
+public class InMemoryTaskManager implements TaskManager {
     private int idCounter = 1;
 
     private final HashMap<Integer, Task> tasks = new HashMap<>();
     private final HashMap<Integer, EpicTask> epicTasks = new HashMap<>();
     private final HashMap<Integer, SubTask> subTasks = new HashMap<>();
 
+    HistoryManager historyManager = Managers.getDefaultHistory();
+
+    @Override
     public void addNewTask(Task task) {
+        if (task.getClass() != Task.class) {
+            return;
+        }
         task.setId(idCounter);
         tasks.put(task.getId(), task);
         idCounter++;
     }
 
+    @Override
     public void addNewEpicTask(EpicTask epicTask) {
         epicTask.setId(idCounter);
         epicTasks.put(epicTask.getId(), epicTask);
         idCounter++;
     }
 
+    @Override
     public void addNewSubTask(SubTask subTask) {
         int relatedEpicTaskId = subTask.getRelatedEpicTaskId();
-        boolean isRelatedEpicTaskExist = isEpicTaskExist(relatedEpicTaskId);
 
-        if (isRelatedEpicTaskExist) {
+        if (isEpicTaskExist(relatedEpicTaskId)) {
             subTask.setId(idCounter);
             subTasks.put(subTask.getId(), subTask);
             EpicTask relatedEpicTask = epicTasks.get(relatedEpicTaskId);
@@ -76,18 +83,43 @@ public class TaskManager {
         }
     }
 
+    @Override
     public Task getTask(int id) {
-        return tasks.get(id);
+        Task task = tasks.get(id);
+        historyManager.add(task);
+        return task;
     }
 
+    @Override
     public EpicTask getEpicTask(int id) {
-        return epicTasks.get(id);
+        EpicTask epicTask = epicTasks.get(id);
+        historyManager.add(epicTask);
+        return epicTask;
     }
 
+    @Override
     public SubTask getSubTask(int id) {
-        return subTasks.get(id);
+        SubTask subTask = subTasks.get(id);
+        historyManager.add(subTask);
+        return subTask;
     }
 
+    @Override
+    public ArrayList<Task> getAllTasks() {
+        return new ArrayList<>(tasks.values());
+    }
+
+    @Override
+    public ArrayList<EpicTask> getAllEpicTasks() {
+        return new ArrayList<>(epicTasks.values());
+    }
+
+    @Override
+    public ArrayList<SubTask> getAllSubTasks() {
+        return new ArrayList<>(subTasks.values());
+    }
+
+    @Override
     public void overwriteTask(int id, String newName, String newDescription, TaskStatus newStatus) {
         if (isTaskExist(id)) {
             changeTaskName(id, newName);
@@ -96,21 +128,24 @@ public class TaskManager {
         }
     }
 
+    @Override
     public void overwriteEpicTask(int id, String newName, String newDescription) {
-        if(isEpicTaskExist(id)) {
+        if (isEpicTaskExist(id)) {
             changeEpicTaskName(id, newName);
             changeEpicTaskDescription(id, newDescription);
         }
     }
 
+    @Override
     public void overwriteSubTask(int id, String newName, String newDescription, TaskStatus newStatus) {
-        if(isSubTaskExist(id)) {
+        if (isSubTaskExist(id)) {
             changeSubTaskName(id, newName);
             changeSubTaskDescription(id, newDescription);
             changeSubTaskStatus(id, newStatus);
         }
     }
 
+    @Override
     public void changeTaskName(int id, String newName) {
         if (isTaskExist(id)) {
             Task task = getTask(id);
@@ -118,6 +153,7 @@ public class TaskManager {
         }
     }
 
+    @Override
     public void changeEpicTaskName(int id, String newName) {
         if (isEpicTaskExist(id)) {
             EpicTask task = getEpicTask(id);
@@ -125,6 +161,7 @@ public class TaskManager {
         }
     }
 
+    @Override
     public void changeSubTaskName(int id, String newName) {
         if (isSubTaskExist(id)) {
             SubTask task = getSubTask(id);
@@ -132,6 +169,7 @@ public class TaskManager {
         }
     }
 
+    @Override
     public void changeTaskDescription(int id, String newDescription) {
         if (isTaskExist(id)) {
             Task task = getTask(id);
@@ -139,6 +177,7 @@ public class TaskManager {
         }
     }
 
+    @Override
     public void changeEpicTaskDescription(int id, String newDescription) {
         if (isEpicTaskExist(id)) {
             EpicTask task = getEpicTask(id);
@@ -146,6 +185,7 @@ public class TaskManager {
         }
     }
 
+    @Override
     public void changeSubTaskDescription(int id, String newDescription) {
         if (isSubTaskExist(id)) {
             SubTask task = getSubTask(id);
@@ -153,6 +193,7 @@ public class TaskManager {
         }
     }
 
+    @Override
     public void changeTaskStatus(int id, TaskStatus newStatus) {
         if (isTaskExist(id)) {
             Task task = getTask(id);
@@ -160,6 +201,7 @@ public class TaskManager {
         }
     }
 
+    @Override
     public void changeSubTaskStatus(int id, TaskStatus newStatus) {
         if (isSubTaskExist(id)) {
             SubTask subTask = getSubTask(id);
@@ -170,12 +212,14 @@ public class TaskManager {
     }
 
 
+    @Override
     public void removeTask(int id) {
         if (isTaskExist(id)) {
             tasks.remove(id);
         }
     }
 
+    @Override
     public void removeEpicTask(int id) {
         if (isEpicTaskExist(id)) {
             EpicTask epicTask = getEpicTask(id);
@@ -186,6 +230,7 @@ public class TaskManager {
         }
     }
 
+    @Override
     public void removeSubTask(int id) {
         if (isSubTaskExist(id)) {
             SubTask subTask = getSubTask(id);
@@ -196,17 +241,18 @@ public class TaskManager {
         }
     }
 
+    @Override
     public void removeAllTasks() {
         tasks.clear();
     }
 
+    @Override
     public void removeAllEpicTasks() {
-        ArrayList<Integer> ids = new ArrayList<>(epicTasks.keySet());
-        for (int id : ids) {
-            removeEpicTask(id);
-        }
+        subTasks.clear();
+        epicTasks.clear();
     }
 
+    @Override
     public void removeAllSubTasks() {
         ArrayList<Integer> ids = new ArrayList<>(subTasks.keySet());
         for (int id : ids) {
@@ -214,6 +260,7 @@ public class TaskManager {
         }
     }
 
+    @Override
     public void removeAll() {
         removeAllTasks();
         removeAllEpicTasks();
@@ -287,29 +334,14 @@ public class TaskManager {
     }
 
     public boolean isTaskExist(int id) {
-        if (tasks.containsKey(id)) {
-            return true;
-        } else {
-            System.out.println("Задачи с указанным ID не существует");
-            return false;
-        }
+        return tasks.containsKey(id);
     }
 
     public boolean isEpicTaskExist(int id) {
-        if (epicTasks.containsKey(id)) {
-            return true;
-        } else {
-            System.out.println("Эпика с указанным ID не существует");
-            return false;
-        }
+        return epicTasks.containsKey(id);
     }
 
     public boolean isSubTaskExist(int id) {
-        if (subTasks.containsKey(id)) {
-            return true;
-        } else {
-            System.out.println("Подзадачи с указанным ID не существует");
-            return false;
-        }
+        return subTasks.containsKey(id);
     }
 }

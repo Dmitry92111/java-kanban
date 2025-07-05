@@ -6,8 +6,13 @@ public class EpicTask extends Task {
     private final ArrayList<Integer> relatedSubTasksId;
 
     public EpicTask(String name, String description) {
-        super(name, description, TaskStatus.NEW);
+        super(name, description);
         relatedSubTasksId = new ArrayList<>();
+    }
+
+    public EpicTask(EpicTask other) {
+        super(other);
+        this.relatedSubTasksId = new ArrayList<>(other.relatedSubTasksId);
     }
 
     public void addRelatedSubTaskId(int subTaskId) {
@@ -18,7 +23,7 @@ public class EpicTask extends Task {
         return new ArrayList<>(relatedSubTasksId);
     }
 
-    public void removeRelatedSubTaskId (int subTaskId) {
+    public void removeRelatedSubTaskId(int subTaskId) {
         relatedSubTasksId.remove((Integer) subTaskId);
     }
 }

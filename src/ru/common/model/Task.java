@@ -1,16 +1,25 @@
 package ru.common.model;
 
+import java.util.Objects;
+
 public class Task {
 
     private String name;
     private String description;
     private TaskStatus status;
-    private int id;
+    private Integer id;
 
-    public Task(String name, String description, TaskStatus status) {
+    public Task(String name, String description) {
         this.name = name;
         this.description = description;
-        this.status = status;
+        this.status = TaskStatus.NEW;
+    }
+
+    public Task (Task other) {
+        this.id = other.id;
+        this.name = other.name;
+        this.description = other.description;
+        this.status = other.status;
     }
 
     @Override
@@ -18,11 +27,11 @@ public class Task {
         return name + " | Описание: " + description + " | Статус: " + status;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -38,11 +47,28 @@ public class Task {
         this.description = description;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
     public TaskStatus getStatus() {
         return status;
     }
 
     public void setStatus(TaskStatus status) {
         this.status = status;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return Objects.equals(id, task.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

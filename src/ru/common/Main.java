@@ -1,123 +1,124 @@
 package ru.common;
 
+import ru.common.managers.InMemoryTaskManager;
+import ru.common.managers.Managers;
+import ru.common.managers.TaskManager;
 import ru.common.model.EpicTask;
 import ru.common.model.SubTask;
 import ru.common.model.Task;
 import ru.common.model.TaskStatus;
-import ru.common.manager.TaskManager;
 
 public class Main {
 
     public static void main(String[] args) {
-        TaskManager taskManager = new TaskManager();
+        TaskManager manager = Managers.getDefault();
 
-        String name = "Выучить уроки"; //id 1
+       /* String name = "Выучить уроки"; //id 1
         String description = "Не люблю учить уроки";
-        TaskStatus status = TaskStatus.NEW;
-        Task task1 = new Task(name, description, status);
-        taskManager.addNewTask(task1);
+        Task task1 = new Task(name, description);
+        manager.addNewTask(task1);
 
 
         String name2 = "Погулять с собакой"; //id 2
         String description2 = "Не люблю гулять с собакой";
         EpicTask epicTask2 = new EpicTask(name2, description2);
-        taskManager.addNewEpicTask(epicTask2);
+        manager.addNewEpicTask(epicTask2);
 
         int relatedEpicTaskId = epicTask2.getId();
 
         String name3 = "Выйти на улицу"; // id 3
         String description3 = "Ну, вышел и вышел";
-        TaskStatus status3 = TaskStatus.DONE;
-        SubTask subTask3 = new SubTask(name3, description3, status3, relatedEpicTaskId);
-        taskManager.addNewSubTask(subTask3);
+        SubTask subTask3 = new SubTask(name3, description3, relatedEpicTaskId);
+        manager.addNewSubTask(subTask3);
 
 
         String name4 = "Гулять"; // id 4
         String description4 = "Гуляю, гуляю, гуляю";
-        TaskStatus status4 = TaskStatus.IN_PROGRESS;
-        SubTask subTask4 = new SubTask(name4, description4, status4, relatedEpicTaskId);
-        taskManager.addNewSubTask(subTask4);
+        SubTask subTask4 = new SubTask(name4, description4, relatedEpicTaskId);
+        manager.addNewSubTask(subTask4);
 
         System.out.println("\nТест 1. Внесение изменений в несуществующую задачу");
-        taskManager.changeEpicTaskName(312, "БУ!");
+        manager.changeEpicTaskName(312, "БУ!");
 
         System.out.println("\nТест 2. Добавление подзадачи по Несуществующему эпику");
-        SubTask subTask5 = new SubTask("Sub", "Desc", TaskStatus.NEW, 999);
-        taskManager.addNewSubTask(subTask5);
+        SubTask subTask5 = new SubTask("Sub", "Desc", 999);
+        manager.addNewSubTask(subTask5);
 
-        taskManager.addNewEpicTask(new EpicTask("Эпик1", ""));
-        taskManager.addNewEpicTask(new EpicTask("Эпик2", ""));
+        manager.addNewEpicTask(new EpicTask("Эпик1", ""));
+        manager.addNewEpicTask(new EpicTask("Эпик2", ""));
 
         System.out.println("\nТест 3. (удаление эпиков)");
-        taskManager.removeAllEpicTasks();
+        manager.removeAllEpicTasks();
 
         System.out.println("\nТест 4. Удаление несуществующей задач");
-        taskManager.removeTask(321);
+        manager.removeTask(321);
+
+        manager.getTask(111);
 
 
-        /*taskManager.printAllTasks();
+        InMemoryTaskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
         int idForChange = 4;
 
         String changedName = "Гулять В ПАРКЕ";
-        taskManager.changeSubTaskName(idForChange, changedName);
-        taskManager.printAllTasks();
+        InMemoryTaskManager.changeSubTaskName(idForChange, changedName);
+        InMemoryTaskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
 
         String changedDescription = "Гуляю, гуляю, гуляю в ПААААРКЕ";
-        taskManager.changeSubTaskDescription(idForChange, changedDescription);
-        taskManager.printAllTasks();
+        InMemoryTaskManager.changeSubTaskDescription(idForChange, changedDescription);
+        InMemoryTaskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
         TaskStatus changedStatus = TaskStatus.DONE;
-        taskManager.changeSubTaskStatus(idForChange, changedStatus);
-        taskManager.printAllTasks();
+        InMemoryTaskManager.changeSubTaskStatus(idForChange, changedStatus);
+        InMemoryTaskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
-        taskManager.overwriteSubTask(idForChange, "АПЫВЫ", "ЖЫФВлв", TaskStatus.NEW);
-        taskManager.printAllTasks();
+        InMemoryTaskManager.overwriteSubTask(idForChange, "АПЫВЫ", "ЖЫФВлв", TaskStatus.NEW);
+        InMemoryTaskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
-        taskManager.overwriteEpicTask(2, "Привет", "Как дела?");
-        taskManager.showEpicTaskInfo(2);
+        InMemoryTaskManager.overwriteEpicTask(2, "Привет", "Как дела?");
+        InMemoryTaskManager.showEpicTaskInfo(2);
         System.out.println("-------------------------------------------------------------------------------");
 
-        taskManager.overwriteTask(1, "ААААААААААА", "ЫЫЫЫЫЫЫЫЫЫЫЫЫЫ", TaskStatus.IN_PROGRESS);
-        taskManager.showTaskInfo(1);
+        InMemoryTaskManager.overwriteTask(1, "ААААААААААА", "ЫЫЫЫЫЫЫЫЫЫЫЫЫЫ", TaskStatus.IN_PROGRESS);
+        InMemoryTaskManager.showTaskInfo(1);
         System.out.println("-------------------------------------------------------------------------------");
 
-        taskManager.changeSubTaskStatus(idForChange, TaskStatus.DONE);
-        taskManager.printAllTasks();
+        InMemoryTaskManager.changeSubTaskStatus(idForChange, TaskStatus.DONE);
+        InMemoryTaskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
-        taskManager.printSubTasks();
+        InMemoryTaskManager.printSubTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
-        taskManager.showSubTaskInfo(3);
+        InMemoryTaskManager.showSubTaskInfo(3);
         System.out.println("-------------------------------------------------------------------------------");
 
-        taskManager.removeSubTask(idForChange);
-        taskManager.printAllTasks();
+        InMemoryTaskManager.removeSubTask(idForChange);
+        InMemoryTaskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
-        taskManager.removeEpicTask(2);
-        taskManager.printAllTasks();
+        InMemoryTaskManager.removeEpicTask(2);
+        InMemoryTaskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
-        taskManager.removeTask(1);
-        taskManager.printAllTasks();
+        InMemoryTaskManager.removeTask(1);
+        InMemoryTaskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
-        taskManager.addNewTask(new Task(name, description, status));
-        taskManager.addNewTask(new Task(name, description, status));
-        taskManager.addNewTask(new Task(name, description, status));
-        taskManager.printAllTasks();
+        InMemoryTaskManager.addNewTask(new Task(name, description, status));
+        InMemoryTaskManager.addNewTask(new Task(name, description, status));
+        InMemoryTaskManager.addNewTask(new Task(name, description, status));
+        InMemoryTaskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");
 
-        taskManager.removeAll();
-        taskManager.printAllTasks();
+        InMemoryTaskManager.removeAll();
+        InMemoryTaskManager.printAllTasks();
         System.out.println("-------------------------------------------------------------------------------");*/
     }
 }
