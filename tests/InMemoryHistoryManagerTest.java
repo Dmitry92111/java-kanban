@@ -5,9 +5,10 @@ import ru.common.model.EpicTask;
 import ru.common.model.SubTask;
 import ru.common.model.Task;
 
+import java.util.List;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -61,7 +62,14 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void shouldRemoveFirstTaskWhenMoreThan10TasksAdded() {
+    void shouldNotDoubleSameTasksInHistory() {
+        manager.add(task1);
+        manager.add(task1);
+        assertEquals(manager.getHistory(), new ArrayList<>(Collections.singletonList(task1)));
+    }
+
+    @Test
+    void shouldSaveTasksOrder() {
         manager.add(task1);
         manager.add(task2);
         manager.add(task3);
@@ -74,17 +82,73 @@ class InMemoryHistoryManagerTest {
         manager.add(task10);
         manager.add(task11);
 
-        ArrayList<Task> check = new ArrayList<>(
-                Arrays.asList(task2, task3, task4, task5, task6, task7, task8, task9, task10, task11));
+        List<Task> expectedList = new LinkedList<>();
+        expectedList.add(task1);
+        expectedList.add(task2);
+        expectedList.add(task3);
+        expectedList.add(task4);
+        expectedList.add(task5);
+        expectedList.add(task6);
+        expectedList.add(task7);
+        expectedList.add(task8);
+        expectedList.add(task9);
+        expectedList.add(task10);
+        expectedList.add(task11);
 
-        assertEquals(manager.getHistory(), check);
+        assertEquals(manager.getHistory(), expectedList);
     }
 
     @Test
-    void shouldSaveSameTasksInHistory() {
+    void shouldRemoveTaskFromMiddle() {
         manager.add(task1);
-        manager.add(task1);
+        manager.add(task2);
+        manager.add(task3);
 
-        assertEquals(manager.getHistory(), new ArrayList<>(Arrays.asList(task1, task1)));
+        manager.remove(task2.getId());
+
+        List<Task> expectedList = List.of(task1, task3);
+
+        assertEquals(manager.getHistory(), expectedList);
+    }
+
+    @Test
+    void shouldRemoveHeadTask() {
+        manager.add(task1);
+        manager.add(task2);
+        manager.add(task3);
+
+        manager.remove(task1.getId());
+
+        List<Task> expectedList = List.of(task2, task3);
+
+        assertEquals(manager.getHistory(), expectedList);
+    }
+
+    @Test
+    void shouldRemoveTailTask() {
+        manager.add(task1);
+        manager.add(task2);
+        manager.add(task3);
+
+        manager.remove(task3.getId());
+
+        List<Task> expectedList = List.of(task1, task2);
+
+        assertEquals(manager.getHistory(), expectedList);
+    }
+
+    @Test
+    void shouldMoveTaskToTailIfReAdded() {
+        manager.add(task1);
+        manager.add(task2);
+        manager.add(task3);
+        manager.add(task4);
+        manager.add(task5);
+
+        manager.add(task3);
+
+        List<Task> expectedList = List.of(task1, task2, task4, task5, task3);
+
+        assertEquals(manager.getHistory(), expectedList);
     }
 }
