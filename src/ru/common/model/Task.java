@@ -9,10 +9,29 @@ public class Task {
     private TaskStatus status;
     private Integer id;
 
+    private final TaskType type;
+
+
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
         this.status = TaskStatus.NEW;
+        this.type = TaskType.TASK;
+    }
+
+    public Task(String name, String description, TaskType type) {
+        this.name = name;
+        this.description = description;
+        this.status = TaskStatus.NEW;
+        this.type = type;
+    }
+
+    public Task(int id, TaskType type, String name, TaskStatus status, String description) {
+        this.id = id;
+        this.type = type;
+        this.name = name;
+        this.status = status;
+        this.description = description;
     }
 
     @Override
@@ -50,6 +69,10 @@ public class Task {
 
     public void setStatus(TaskStatus status) {
         this.status = status;
+    }
+
+    public TaskType getType() {
+        return type;
     }
 
     @Override
