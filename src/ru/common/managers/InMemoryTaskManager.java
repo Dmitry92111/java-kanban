@@ -217,6 +217,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void removeTask(int id) {
         if (isTaskExist(id)) {
             tasks.remove(id);
+            historyManager.remove(id);
         }
     }
 
@@ -226,8 +227,10 @@ public class InMemoryTaskManager implements TaskManager {
             EpicTask epicTask = getEpicTask(id);
             for (int i : epicTask.getRelatedSubTasksId()) {
                 subTasks.remove(i);
+                historyManager.remove(i);
             }
             epicTasks.remove(id);
+            historyManager.remove(id);
         }
     }
 
@@ -238,23 +241,28 @@ public class InMemoryTaskManager implements TaskManager {
             EpicTask epicTask = epicTasks.get(subTask.getRelatedEpicTaskId());
             epicTask.removeRelatedSubTaskId(id);
             subTasks.remove(id);
+            historyManager.remove(id);
             checkSubTaskStatusAndUpdateEpic(epicTask);
         }
     }
 
     @Override
     public void removeAllTasks() {
+        clearTasksHistory(tasks);
         tasks.clear();
     }
 
     @Override
     public void removeAllEpicTasks() {
+        clearTasksHistory(subTasks);
+        clearTasksHistory(epicTasks);
         subTasks.clear();
         epicTasks.clear();
     }
 
     @Override
     public void removeAllSubTasks() {
+        clearTasksHistory(subTasks);
         ArrayList<Integer> ids = new ArrayList<>(subTasks.keySet());
         for (int id : ids) {
             removeSubTask(id);
@@ -344,5 +352,11 @@ public class InMemoryTaskManager implements TaskManager {
 
     public boolean isSubTaskExist(int id) {
         return subTasks.containsKey(id);
+    }
+
+    public <T extends Task> void clearTasksHistory(Map<Integer, T> tasks) {
+        for (int id : tasks.keySet()) {
+            historyManager.remove(id);
+        }
     }
 }
