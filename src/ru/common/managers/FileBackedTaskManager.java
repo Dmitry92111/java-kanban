@@ -1,6 +1,8 @@
 package ru.common.managers;
 
+import ru.common.exeptions.ManagerSaveException;
 import ru.common.mappers.FileTaskMapper;
+import ru.common.messages.ExeptionMessages;
 import ru.common.model.EpicTask;
 import ru.common.model.SubTask;
 import ru.common.model.Task;
@@ -35,7 +37,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                 writer.write(FileTaskMapper.toString(task) + "\n");
             }
         } catch (IOException e) {
-            System.out.println("Произошла ошибка во время записи файла.");
+            throw new ManagerSaveException(ExeptionMessages.SAVE_ERROR, e);
         }
     }
 
@@ -74,7 +76,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                 }
             }
         } catch (IOException e) {
-            System.out.println("Произошла ошибка во время чтения файла.");
+            throw new ManagerSaveException(ExeptionMessages.LOAD_ERROR, e);
         }
         return manager;
     }
