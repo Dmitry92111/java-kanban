@@ -49,6 +49,29 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
+
+    public void addTaskWithId(Task task) {
+        if (task.getClass() != Task.class) {
+            return;
+        }
+        tasks.put(task.getId(), task);
+    }
+
+    public void addEpicTaskWithId(EpicTask epicTask) {
+        epicTasks.put(epicTask.getId(), epicTask);
+    }
+
+    public void addSubTaskWithId(SubTask subTask) {
+        subTasks.put(subTask.getId(), subTask);
+        int relatedEpicTaskId = subTask.getRelatedEpicTaskId();
+
+        if (isEpicTaskExist(relatedEpicTaskId)) {
+            EpicTask relatedEpicTask = epicTasks.get(relatedEpicTaskId);
+            relatedEpicTask.addRelatedSubTaskId(subTask.getId());
+            checkSubTaskStatusAndUpdateEpic(relatedEpicTask);
+        }
+    }
+
     public void printAllTasks() {
         printTasks();
         System.out.println();
