@@ -2,7 +2,7 @@ package ru.common.managers;
 
 import ru.common.exeptions.ManagerSaveException;
 import ru.common.mappers.FileTaskMapper;
-import ru.common.messages.ExeptionMessages;
+import ru.common.messages.ExceptionMessages;
 import ru.common.model.EpicTask;
 import ru.common.model.SubTask;
 import ru.common.model.Task;
@@ -27,7 +27,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
 
     public void save() {
         try (BufferedWriter writer = Files.newBufferedWriter(autosaveFile, StandardCharsets.UTF_8)) {
-            writer.write("id,type,name,status,description,epic\n");
+            writer.write("id,type,name,status,description,startTime,duration, epic\n");
             List<Task> allTasks = new ArrayList<>();
             allTasks.addAll(getAllTasks());
             allTasks.addAll(getAllEpicTasks());
@@ -37,7 +37,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                 writer.write(FileTaskMapper.toString(task) + "\n");
             }
         } catch (IOException e) {
-            throw new ManagerSaveException(ExeptionMessages.SAVE_ERROR, e);
+            throw new ManagerSaveException(ExceptionMessages.SAVE_ERROR, e);
         }
     }
 
@@ -58,7 +58,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                 }
                 Task task = FileTaskMapper.fromString(line);
 
-
                 if (task instanceof SubTask) {
                     subTasksToLink.add((SubTask) task);
                     manager.addSubTaskWithId((SubTask) task);
@@ -73,10 +72,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                 EpicTask epicTask = manager.getEpicTask(subtask.getRelatedEpicTaskId());
                 if (!epicTask.getRelatedSubTasksId().contains(subtask.getId())) {
                     epicTask.addRelatedSubTaskId(subtask.getId());
+                    manager.recalculateEpicTaskStartTimeAndDurationAndEndTime(epicTask);
                 }
             }
         } catch (IOException e) {
-            throw new ManagerSaveException(ExeptionMessages.LOAD_ERROR, e);
+            throw new ManagerSaveException(ExceptionMessages.LOAD_ERROR, e);
         }
         return manager;
     }
@@ -206,5 +206,21 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         super.removeAll();
         save();
     }
+
+    @Override
+    public boolean isTaskExist(int id) {
+        return super.isTaskExist(id);
+    }
+
+    @Override
+    public boolean isSubTaskExist(int id) {
+        return super.isSubTaskExist(id);
+    }
+
+    @Override
+    public boolean isEpicTaskExist(int id) {
+        return super.isEpicTaskExist(id);
+    }
 }
+
 

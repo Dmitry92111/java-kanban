@@ -1,8 +1,8 @@
 package ru.common.messages;
 
-public final class ExeptionMessages {
+public final class ExceptionMessages {
 
-    private ExeptionMessages() {
+    private ExceptionMessages() {
 
     }
 
@@ -15,4 +15,5 @@ public final class ExeptionMessages {
     public static final String STRING_HAS_INCORRECT_ID = "String contains incorrect ID";
     public static final String STRING_HAS_INCORRECT_TYPE = "String contains incorrect type";
     public static final String STRING_HAS_INCORRECT_STATUS = "String contains incorrect status";
+    public static final String TASK_HAS_OVERLAPPING_TASK = "Task has overlapping tasks";
 }

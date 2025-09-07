@@ -1,36 +1,31 @@
 import org.junit.jupiter.api.*;
+import ru.common.exeptions.ManagerSaveException;
 import ru.common.managers.FileBackedTaskManager;
 import ru.common.model.Task;
 import ru.common.model.EpicTask;
 import ru.common.model.SubTask;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FileBackedTaskManagerTest {
+class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
 
-    FileBackedTaskManager manager;
     Path tempFile;
 
-    Task task1;
-    Task task2;
-    Task task3;
-    EpicTask epicTask1;
-    EpicTask epicTask2;
+    @Override
+    FileBackedTaskManager createManager() {
+        return new FileBackedTaskManager(tempFile);
+    }
 
     @BeforeEach
-    void setup() throws Exception {
+    void setUp() throws IOException {
         tempFile = Files.createTempFile("tasks", ".csv");
         tempFile.toFile().deleteOnExit();
-        manager = new FileBackedTaskManager(tempFile);
-
-        task1 = new Task("task 1", "taskDescription 1");
-        task2 = new Task("task 2", "taskDescription 2");
-        task3 = new Task("task 3", "taskDescription 3");
-        epicTask1 = new EpicTask("epicTask 1", "epicTaskDescription 1");
-        epicTask2 = new EpicTask("epicTask 2", "epicTaskDescription 2");
+        createTasks();
+        manager = createManager();
     }
 
     @Test
@@ -78,5 +73,17 @@ class FileBackedTaskManagerTest {
         assertEquals(loadedSubTask1, subTask1);
         assertEquals(loadedSubTask2, subTask2);
         assertEquals(loadedSubTask3, subTask3);
+    }
+
+    @Test
+    void shouldThrowExceptionIfDataIsIncorrectWhenLoad() throws IOException {
+        Path tempFile2 = Files.createTempFile("file1", ".csv");
+        tempFile2.toFile().deleteOnExit();
+        String incorrectData = "Header \n 1:,";
+        Files.writeString(tempFile2, incorrectData);
+
+        ManagerSaveException exception = assertThrows(ManagerSaveException.class, () -> {
+            FileBackedTaskManager.loadFromFile(tempFile2);
+        });
     }
 }

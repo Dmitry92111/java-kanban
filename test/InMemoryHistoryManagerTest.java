@@ -151,4 +151,15 @@ class InMemoryHistoryManagerTest {
 
         assertEquals(manager.getHistory(), expectedList);
     }
+
+    @Test
+    void shouldReturnEmptyHistoryIfNoTasksAdded() {
+        assertTrue(manager.getHistory().isEmpty());
+    }
+
+    @Test
+    void shouldNotFailWhenRemovingFromEmptyHistory() {
+        manager.remove(999);  // несуществующий id
+        assertTrue(manager.getHistory().isEmpty());
+    }
 }
