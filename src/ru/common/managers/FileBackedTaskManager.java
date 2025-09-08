@@ -3,10 +3,7 @@ package ru.common.managers;
 import ru.common.exeptions.ManagerSaveException;
 import ru.common.mappers.FileTaskMapper;
 import ru.common.messages.ExceptionMessages;
-import ru.common.model.EpicTask;
-import ru.common.model.SubTask;
-import ru.common.model.Task;
-import ru.common.model.TaskStatus;
+import ru.common.model.*;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -58,10 +55,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                 }
                 Task task = FileTaskMapper.fromString(line);
 
-                if (task instanceof SubTask) {
+                if (task.getType() == TaskType.SUBTASK) {
                     subTasksToLink.add((SubTask) task);
                     manager.addSubTaskWithId((SubTask) task);
-                } else if (task instanceof EpicTask) {
+                } else if (task.getType() == TaskType.EPIC) {
                     manager.addEpicTaskWithId((EpicTask) task);
                 } else {
                     manager.addTaskWithId(task);

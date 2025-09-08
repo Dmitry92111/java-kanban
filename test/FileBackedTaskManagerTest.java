@@ -24,7 +24,6 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     void setUp() throws IOException {
         tempFile = Files.createTempFile("tasks", ".csv");
         tempFile.toFile().deleteOnExit();
-        createTasks();
         manager = createManager();
     }
 
@@ -40,17 +39,15 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
 
     @Test
     void shouldSaveAndLoadSeveralTasks() {
+        createFullTasksSet();
 
-        manager.addNewTask(task1);
-        manager.addNewEpicTask(epicTask1);
+        manager.addNewEpicTask(epicTask1);//id 1
+        manager.addNewTask(task1);//id 2
 
-        SubTask subTask1 = new SubTask("subTask 1", "subTaskDescription 1", epicTask1.getId());
-        SubTask subTask2 = new SubTask("subTask 2", "subTaskDescription 2", epicTask1.getId());
-        SubTask subTask3 = new SubTask("subTask 3", "subTaskDescription 3", epicTask1.getId());
 
-        manager.addNewSubTask(subTask1);
-        manager.addNewSubTask(subTask2);
-        manager.addNewSubTask(subTask3);
+        manager.addNewSubTask(subTask1_1epic);
+        manager.addNewSubTask(subTask2_1epic);
+        manager.addNewSubTask(subTask3_1epic);
 
         FileBackedTaskManager loaded = FileBackedTaskManager.loadFromFile(tempFile);
 
@@ -64,15 +61,15 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
         SubTask loadedSubTask2 = loaded.getAllSubTasks().get(1);
         SubTask loadedSubTask3 = loaded.getAllSubTasks().get(2);
 
-        assertTrue(loadedEpicTask1.getRelatedSubTasksId().contains(subTask1.getId()));
-        assertTrue(loadedEpicTask1.getRelatedSubTasksId().contains(subTask2.getId()));
-        assertTrue(loadedEpicTask1.getRelatedSubTasksId().contains(subTask3.getId()));
+        assertTrue(loadedEpicTask1.getRelatedSubTasksId().contains(subTask1_1epic.getId()));
+        assertTrue(loadedEpicTask1.getRelatedSubTasksId().contains(subTask2_1epic.getId()));
+        assertTrue(loadedEpicTask1.getRelatedSubTasksId().contains(subTask3_1epic.getId()));
 
         assertEquals(loadedEpicTask1, epicTask1);
         assertEquals(loadedTask1, task1);
-        assertEquals(loadedSubTask1, subTask1);
-        assertEquals(loadedSubTask2, subTask2);
-        assertEquals(loadedSubTask3, subTask3);
+        assertEquals(loadedSubTask1, subTask1_1epic);
+        assertEquals(loadedSubTask2, subTask2_1epic);
+        assertEquals(loadedSubTask3, subTask3_1epic);
     }
 
     @Test
@@ -82,7 +79,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
         String incorrectData = "Header \n 1:,";
         Files.writeString(tempFile2, incorrectData);
 
-        ManagerSaveException exception = assertThrows(ManagerSaveException.class, () -> {
+        assertThrows(ManagerSaveException.class, () -> {
             FileBackedTaskManager.loadFromFile(tempFile2);
         });
     }

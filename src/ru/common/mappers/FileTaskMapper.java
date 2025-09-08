@@ -32,7 +32,7 @@ public final class FileTaskMapper {
         task.getStartTime().ifPresent(startTime -> sb.append(",").append(startTime.format(formatter)));
         task.getDuration().ifPresent(duration -> sb.append(",").append(duration.toMinutes()));
 
-        if (task instanceof SubTask) {
+        if (task.getType() == TaskType.SUBTASK) {
             int relatedEpicTaskId = ((SubTask) task).getRelatedEpicTaskId();
             sb.append(",").append(relatedEpicTaskId);
         }

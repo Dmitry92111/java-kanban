@@ -2,10 +2,7 @@ package ru.common.managers;
 
 import ru.common.exeptions.ManagerSaveException;
 import ru.common.messages.ExceptionMessages;
-import ru.common.model.Task;
-import ru.common.model.EpicTask;
-import ru.common.model.SubTask;
-import ru.common.model.TaskStatus;
+import ru.common.model.*;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -23,7 +20,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addNewTask(Task task) {
-        if (task.getClass() != Task.class) return;
+        if (task.getType() != TaskType.TASK) return;
 
         if (task.getStartTime().isPresent() && isTaskHasOverlappingTask(task)) {
             throw new ManagerSaveException(ExceptionMessages.TASK_HAS_OVERLAPPING_TASK);
@@ -70,7 +67,7 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     public void addTaskWithId(Task task) {
-        if (task.getClass() != Task.class) return;
+        if (task.getType() != TaskType.TASK) return;
         tasks.put(task.getId(), task);
 
         if (task.getStartTime().isPresent()) {

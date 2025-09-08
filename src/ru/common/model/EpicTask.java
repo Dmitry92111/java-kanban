@@ -3,6 +3,7 @@ package ru.common.model;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class EpicTask extends Task {
     private final ArrayList<Integer> relatedSubTasksId;
@@ -43,5 +44,10 @@ public class EpicTask extends Task {
 
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
+    }
+
+    @Override
+    public Optional<LocalDateTime> getEndTime() {
+        return Optional.ofNullable(endTime);
     }
 }
