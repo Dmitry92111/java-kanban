@@ -6,6 +6,7 @@ import ru.common.model.Task;
 import ru.common.model.TaskStatus;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface TaskManager {
     void addNewTask(Task task);
@@ -67,4 +68,6 @@ public interface TaskManager {
     boolean isEpicTaskExist(int id);
 
     boolean isSubTaskExist(int id);
+
+    public List<Task> getPrioritizedTasks();
 }

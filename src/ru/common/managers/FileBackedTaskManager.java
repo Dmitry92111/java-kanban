@@ -19,6 +19,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
     private final Path autosaveFile;
 
     public FileBackedTaskManager(Path autosaveFile) {
+        super(Managers.getDefaultHistory());
         this.autosaveFile = autosaveFile;
     }
 

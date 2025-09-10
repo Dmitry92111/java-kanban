@@ -15,8 +15,11 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, EpicTask> epicTasks = new HashMap<>();
     protected final Map<Integer, SubTask> subTasks = new HashMap<>();
     protected final Set<Task> prioritizedTasks = new TreeSet<>(Task.BY_START_TIME);
+    protected final HistoryManager historyManager;
 
-    HistoryManager historyManager = Managers.getDefaultHistory();
+    public InMemoryTaskManager(HistoryManager historyManager) {
+        this.historyManager = historyManager;
+    }
 
     @Override
     public void addNewTask(Task task) {
