@@ -1,36 +1,30 @@
 import org.junit.jupiter.api.*;
+import ru.common.exeptions.ManagerSaveException;
 import ru.common.managers.FileBackedTaskManager;
 import ru.common.model.Task;
 import ru.common.model.EpicTask;
 import ru.common.model.SubTask;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FileBackedTaskManagerTest {
+class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
 
-    FileBackedTaskManager manager;
     Path tempFile;
 
-    Task task1;
-    Task task2;
-    Task task3;
-    EpicTask epicTask1;
-    EpicTask epicTask2;
+    @Override
+    FileBackedTaskManager createManager() {
+        return new FileBackedTaskManager(tempFile);
+    }
 
     @BeforeEach
-    void setup() throws Exception {
+    void setUp() throws IOException {
         tempFile = Files.createTempFile("tasks", ".csv");
         tempFile.toFile().deleteOnExit();
-        manager = new FileBackedTaskManager(tempFile);
-
-        task1 = new Task("task 1", "taskDescription 1");
-        task2 = new Task("task 2", "taskDescription 2");
-        task3 = new Task("task 3", "taskDescription 3");
-        epicTask1 = new EpicTask("epicTask 1", "epicTaskDescription 1");
-        epicTask2 = new EpicTask("epicTask 2", "epicTaskDescription 2");
+        manager = createManager();
     }
 
     @Test
@@ -45,17 +39,15 @@ class FileBackedTaskManagerTest {
 
     @Test
     void shouldSaveAndLoadSeveralTasks() {
+        createFullTasksSet();
 
-        manager.addNewTask(task1);
-        manager.addNewEpicTask(epicTask1);
+        manager.addNewEpicTask(epicTask1);//id 1
+        manager.addNewTask(task1);//id 2
 
-        SubTask subTask1 = new SubTask("subTask 1", "subTaskDescription 1", epicTask1.getId());
-        SubTask subTask2 = new SubTask("subTask 2", "subTaskDescription 2", epicTask1.getId());
-        SubTask subTask3 = new SubTask("subTask 3", "subTaskDescription 3", epicTask1.getId());
 
-        manager.addNewSubTask(subTask1);
-        manager.addNewSubTask(subTask2);
-        manager.addNewSubTask(subTask3);
+        manager.addNewSubTask(subTask1_1epic);
+        manager.addNewSubTask(subTask2_1epic);
+        manager.addNewSubTask(subTask3_1epic);
 
         FileBackedTaskManager loaded = FileBackedTaskManager.loadFromFile(tempFile);
 
@@ -69,14 +61,26 @@ class FileBackedTaskManagerTest {
         SubTask loadedSubTask2 = loaded.getAllSubTasks().get(1);
         SubTask loadedSubTask3 = loaded.getAllSubTasks().get(2);
 
-        assertTrue(loadedEpicTask1.getRelatedSubTasksId().contains(subTask1.getId()));
-        assertTrue(loadedEpicTask1.getRelatedSubTasksId().contains(subTask2.getId()));
-        assertTrue(loadedEpicTask1.getRelatedSubTasksId().contains(subTask3.getId()));
+        assertTrue(loadedEpicTask1.getRelatedSubTasksId().contains(subTask1_1epic.getId()));
+        assertTrue(loadedEpicTask1.getRelatedSubTasksId().contains(subTask2_1epic.getId()));
+        assertTrue(loadedEpicTask1.getRelatedSubTasksId().contains(subTask3_1epic.getId()));
 
         assertEquals(loadedEpicTask1, epicTask1);
         assertEquals(loadedTask1, task1);
-        assertEquals(loadedSubTask1, subTask1);
-        assertEquals(loadedSubTask2, subTask2);
-        assertEquals(loadedSubTask3, subTask3);
+        assertEquals(loadedSubTask1, subTask1_1epic);
+        assertEquals(loadedSubTask2, subTask2_1epic);
+        assertEquals(loadedSubTask3, subTask3_1epic);
+    }
+
+    @Test
+    void shouldThrowExceptionIfDataIsIncorrectWhenLoad() throws IOException {
+        Path tempFile2 = Files.createTempFile("file1", ".csv");
+        tempFile2.toFile().deleteOnExit();
+        String incorrectData = "Header \n 1:,";
+        Files.writeString(tempFile2, incorrectData);
+
+        assertThrows(ManagerSaveException.class, () -> {
+            FileBackedTaskManager.loadFromFile(tempFile2);
+        });
     }
 }

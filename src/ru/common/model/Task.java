@@ -1,6 +1,10 @@
 package ru.common.model;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.Objects;
+import java.util.Optional;
 
 public class Task {
 
@@ -8,6 +12,8 @@ public class Task {
     private String description;
     private TaskStatus status;
     private Integer id;
+    private Duration duration;
+    LocalDateTime startTime;
 
     private final TaskType type;
 
@@ -19,11 +25,29 @@ public class Task {
         this.type = TaskType.TASK;
     }
 
+    public Task(String name, String description, LocalDateTime startTime, Duration duration) {
+        this.name = name;
+        this.description = description;
+        this.status = TaskStatus.NEW;
+        this.type = TaskType.TASK;
+        this.startTime = startTime;
+        this.duration = duration;
+    }
+
     public Task(String name, String description, TaskType type) {
         this.name = name;
         this.description = description;
         this.status = TaskStatus.NEW;
         this.type = type;
+    }
+
+    public Task(String name, String description, TaskType type, LocalDateTime startTime, Duration duration) {
+        this.name = name;
+        this.description = description;
+        this.status = TaskStatus.NEW;
+        this.type = type;
+        this.startTime = startTime;
+        this.duration = duration;
     }
 
     public Task(int id, TaskType type, String name, TaskStatus status, String description) {
@@ -32,6 +56,22 @@ public class Task {
         this.name = name;
         this.status = status;
         this.description = description;
+    }
+
+    public Task(int id,
+                TaskType type,
+                String name,
+                TaskStatus status,
+                String description,
+                LocalDateTime startTime,
+                Duration duration) {
+        this.id = id;
+        this.type = type;
+        this.name = name;
+        this.status = status;
+        this.description = description;
+        this.startTime = startTime;
+        this.duration = duration;
     }
 
     @Override
@@ -75,6 +115,27 @@ public class Task {
         return type;
     }
 
+    public Optional<Duration> getDuration() {
+        return Optional.ofNullable(duration);
+    }
+
+    public Optional<LocalDateTime> getStartTime() {
+        return Optional.ofNullable(startTime);
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public Optional<LocalDateTime> getEndTime() {
+        return Optional.ofNullable(startTime)
+                .flatMap(startTime -> Optional.ofNullable(duration).map(startTime::plus));
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -87,4 +148,7 @@ public class Task {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    public static final Comparator<Task> BY_START_TIME = Comparator.comparing(
+            task -> task.getStartTime().orElse(LocalDateTime.MAX));
 }

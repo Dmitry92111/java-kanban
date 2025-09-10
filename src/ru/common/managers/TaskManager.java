@@ -61,4 +61,10 @@ public interface TaskManager {
     void removeAllSubTasks();
 
     void removeAll();
+
+    boolean isTaskExist(int id);
+
+    boolean isEpicTaskExist(int id);
+
+    boolean isSubTaskExist(int id);
 }
